@@ -1,0 +1,16 @@
+create table PATIENT(Name varchar(10),Age int,Symptom1 varchar(10),Symptom2
+varchar(10),Symptom3 varchar(10),City varchar(10) UNIQUE,Gender varchar(10) UNIQUE);
+CREATE TABLE DISEASE(Name varchar(10),Symptom1 varchar(10),Symptom2
+varchar(10),Symptom3 varchar(10),Type varchar(10) UNIQUE,primary key(Name));
+Create table DOCTOR(ID int,DOCName varchar(10),Specialisation varchar(10),Hospital
+varchar(10),Fee int,primary key(ID),FOREIGN KEY (Specialisation) REFERENCES
+DISEASE(PartAffected));
+create table HOSPITAL(Hname varchar(10),City varchar(10),DoctorID INT,FOREIGN KEY
+(DoctorID) REFERENCES DOCTOR(ID), FOREIGN KEY (City) REFERENCES
+DISEASE(City));
+A FEW SAMPLE INSERTION OF VALUES:
+insert into DOCTOR(ID,Name,Specialisation,Hospital,Fee) values (1200,"Rahul
+K","Skin","AIIMS",35000);
+insert into HOSPITAL(Name,City,DoctorID) values ("AIIMS","New Delhi",1200);
+insert into DISEASE(Name,Symptom1,Symptom2,Symptom3,Type) values
+("Migrane","Nausea","Eye Pain","Headache","Head");
