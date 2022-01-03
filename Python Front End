@@ -1,0 +1,147 @@
+import tkinter
+import mysql.connector as sc
+from PIL import Image, ImageTk
+#Establishing connection
+sqlcon = sc.connect(host="localhost", user='root', passwd="***********", database="dochos",
+autocommit=True)
+cursor = sqlcon.cursor()
+# healthcare
+root = tkinter.Tk()
+# root.geometry("400x500")
+def input():
+ lab1 = tkinter.Label(root, text='Name', font=('calibre', 10, 'bold'))
+ val1 = tkinter.StringVar()
+ ent1 = tkinter.Entry(root, textvariable=val1, width=20)
+ lab2 = tkinter.Label(root, text="Age", font=('calibre', 10, 'bold'))
+ val2 = tkinter.IntVar()
+ ent2 = tkinter.Entry(root, textvariable=val2, width=20)
+ ent2.delete(0, tkinter.END)
+ lab3 = tkinter.Label(root, text="City", font=('calibre', 10, 'bold'))
+ val3 = tkinter.StringVar()
+ ent3 = tkinter.Entry(root, textvariable=val3, width=20)
+ lab4 = tkinter.Label(root, text="Symptom 1", font=('calibre', 10, 'bold'))
+ val4 = tkinter.StringVar()
+ ent4 = tkinter.Entry(root, textvariable=val4, font=('calibre', 10), width=20)
+ lab5 = tkinter.Label(root, text="Symptom 2", font=('calibre', 10, 'bold'))
+ val5 = tkinter.StringVar()
+ ent5 = tkinter.Entry(root, textvariable=val5, font=('calibre', 10), width=20)
+ lab6 = tkinter.Label(root, text="Symptom 3", font=('calibre', 10, 'bold'))
+ val6 = tkinter.StringVar()
+ ent6 = tkinter.Entry(root, textvariable=val6, font=('calibre', 10), width=20)
+ var = tkinter.StringVar()
+ opt = {"Male", "Female", "Other"}
+ var.set("Male")
+ lab7 = tkinter.Label(root, text="Gender", font=('calibre', 10, 'bold'))
+ drop = tkinter.OptionMenu(root, var, *opt)
+ lab1.grid(row=1, column=0, padx=10, pady=10, sticky=(tkinter.E, tkinter.W, tkinter.N,
+tkinter.S))
+ ent1.grid(row=1, column=1, padx=10, pady=10, sticky=(tkinter.E, tkinter.W, tkinter.N,
+tkinter.S))
+ lab2.grid(row=2, column=0, padx=10, pady=10, sticky=(tkinter.E, tkinter.W, tkinter.N,
+tkinter.S))
+ ent2.grid(row=2, column=1, padx=10, pady=10, sticky=(tkinter.E, tkinter.W, tkinter.N,
+tkinter.S))
+ lab3.grid(row=3, column=0, padx=10, pady=10, sticky=(tkinter.E, tkinter.W, tkinter.N,
+tkinter.S))
+ ent3.grid(row=3, column=1, padx=10, pady=10, sticky=(tkinter.E, tkinter.W, tkinter.N,
+tkinter.S))
+ lab7.grid(row=4, column=0, padx=10, pady=10, sticky=(tkinter.E, tkinter.W, tkinter.N,
+tkinter.S))
+ drop.grid(row=4, column=1, padx=10, pady=10, sticky=(tkinter.E, tkinter.W, tkinter.N,
+tkinter.S))
+ lab4.grid(row=5, column=0, padx=10, pady=10, sticky=(tkinter.E, tkinter.W, tkinter.N,
+tkinter.S))
+ ent4.grid(row=5, column=1, padx=10, pady=10, sticky=(tkinter.E, tkinter.W, tkinter.N,
+tkinter.S))
+ lab5.grid(row=6, column=0, padx=10, pady=10, sticky=(tkinter.E, tkinter.W, tkinter.N,
+tkinter.S))
+ ent5.grid(row=6, column=1, padx=10, pady=10, sticky=(tkinter.E, tkinter.W, tkinter.N,
+tkinter.S))
+ lab6.grid(row=7, column=0, padx=10, pady=10, sticky=(tkinter.E, tkinter.W, tkinter.N,
+tkinter.S))
+ ent6.grid(row=7, column=1, padx=10, pady=10, sticky=(tkinter.E, tkinter.W, tkinter.N,
+tkinter.S))
+ image = Image.open("hosp.jpg")
+ image = image.resize((170, 120))
+ photo = ImageTk.PhotoImage(image)
+ label = tkinter.Label(root, image=photo)
+ label.image = photo
+ label.grid(row=0, column=0, padx=10, pady=10, sticky=(tkinter.E, tkinter.W, tkinter.N,
+tkinter.S))
+ def fun(): # Retrieving data from input
+ name = ent1.get()
+ age = ent2.get()
+ city = ent3.get()
+ symp1 = ent4.get()
+ symp2 = ent5.get()
+ symp3 = ent6.get()
+ gen = var.get()
+ lab1.destroy()
+ lab2.destroy()
+ lab3.destroy()
+ lab4.destroy()
+ lab5.destroy()
+ lab6.destroy()
+ lab7.destroy()
+ ent1.destroy()
+ ent2.destroy()
+ ent3.destroy()
+ ent4.destroy()
+ ent5.destroy()
+ ent6.destroy()
+ drop.destroy()
+ label.destroy()
+ but.destroy()
+ cursor.execute(f"Insert into Patient values ('{name}', {age}, '{symp1}', '{symp2}',
+'{symp3}', '{city}', '{gen}')")
+ symp1=symp1.lower()
+ symp2=symp2.lower()
+ symp3=symp3.lower()
+ cursor.execute("Select * from DISEASE")
+ t = cursor.fetchall()
+ t = list(t)
+ for k in range(len(t)):
+ t[k]=list(t[k])
+ list(t[k])
+ for l in range(len(t[k])):
+ if l != 0:
+ t[k][l]= t[k][l].lower()
+ Lab1 = tkinter.Label(root,text=("Symptoms does not match to any disease in the
+database."))
+ part = None
+ for i in t:
+ if symp1 in i and symp2 in i and symp3 in i:
+ part = i[4]
+ Lab1 = tkinter.Label(root,text=(f"Patient is suffering from {i[0]}"))
+ break
+ elif symp1 in i or symp2 in i or symp3 in i:
+ part = i[4]
+ Lab1 = tkinter.Label(root,text=(f"Patient may be suffering from {i[0]}"))
+ if part!=None:
+ cursor.execute(f"Select ID, DOCname from DOCTOR where '{part}' =
+DOCTOR.Specialisation")
+ tdoc = cursor.fetchone()
+ docid = tdoc[0]
+ docname = tdoc[1]
+ cursor.execute(f"Select Hname, City from HOSPITAL where HOSPITAL.DoctorID =
+'{docid}'")
+ hosp = cursor.fetchone()
+ hospname=hosp[0]
+ hospcity=hosp[1]
+ Lab2 = tkinter.Label(root, text=(f"The recommend doctor to go to is {docname}"))
+ Lab3 = tkinter.Label(root, text=(f" {docname} works in {hospname} located in
+{hospcity}"))
+ Lab1.grid(row=0, column=0, padx=10, pady=10, sticky=tkinter.W)
+ Lab2.grid(row=1, column=0, padx=10, pady=10, sticky=tkinter.W)
+ Lab3.grid(row=2, column=0, padx=10, pady=10, sticky=tkinter.W)
+ But1 = tkinter.Button(root, text="Try again", command=input)
+ But2 = tkinter.Button(root, text="Done", command=root.destroy)
+ But1.grid(row=3,column=0,padx=10,pady=10, sticky=tkinter.W)
+ But2.grid(row=3,column=1,padx=10,pady=10)
+ else:
+ Lab1.grid(row=0,column=0,padx=10,pady=10)
+ but = tkinter.Button(root, text="Submit", font=('calibre', 10), command=fun)
+ but.grid(row=8, column=1, padx=10, pady=10, sticky=(tkinter.E, tkinter.W, tkinter.N,
+tkinter.S))
+ root.mainloop()
+ input()
